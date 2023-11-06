@@ -2,7 +2,7 @@ import requests
 import re
 
 
-class UrlEMT():
+class UrlEMT:
     # Constants
     EMT = "https://opendata.emtmadrid.es"
     GENERAL = "/Datos-estaticos/Datos-generales-(1)"
