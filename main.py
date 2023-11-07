@@ -7,3 +7,5 @@ if __name__ == "__main__":
     print(var)
     url = cosa.get_url(1, 23)
     print(url)
+    csv = cosa.get_csv(12, 23)
+    print(csv)

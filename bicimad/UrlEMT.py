@@ -1,5 +1,7 @@
-import requests
+import io
 import re
+import requests
+import zipfile
 
 
 class UrlEMT:
@@ -63,11 +65,20 @@ class UrlEMT:
         # if not found an error is raised
         raise ValueError("Month and year not found")
 
+    def get_csv(self, month: int, year: int) -> io.StringIO:
+        """
 
+        :param month:
+        :param year:
+        :return:
+        """
+        link = self.get_url(month, year)
+        response = requests.get(link)
 
+        if response.status_code != 200:
+            raise ConnectionError("The connection was not successful")
 
-
-
-
-
-
+        bytes_doc = io.BytesIO(response.content)
+        with zipfile.ZipFile(bytes_doc) as zip:
+            with zip.open(zip.namelist()[0]) as csvfile:
+                return io.StringIO(csvfile.read().decode('utf-8'))
