@@ -10,7 +10,7 @@ class UrlEMT:
     GENERAL = "/Datos-estaticos/Datos-generales-(1)"
 
     def __init__(self):
-        self.set_valid_urls = set()
+        self.urls = UrlEMT.select_valid_urls()
 
     @staticmethod
     def get_links(html) -> set:
@@ -24,17 +24,18 @@ class UrlEMT:
         matches = datare.findall(html)
         return set(matches)
 
-    def select_valid_urls(self):
+    @staticmethod
+    def select_valid_urls() -> set:
         """
 
         :return:
         """
-        url = self.EMT + self.GENERAL
+        url = UrlEMT.EMT + UrlEMT.GENERAL
         response = requests.get(url)
 
         if response.status_code == 200:
-            valid_urls = self.get_links(response.text)
-            self.set_valid_urls = valid_urls
+            valid_urls = UrlEMT.get_links(response.text)
+            return valid_urls
         else:
             raise ConnectionError("The connection was not successful")
 
@@ -58,9 +59,9 @@ class UrlEMT:
         url = f"trips_{year_str}_{month_str}"
 
         # check if the selected url is in the set
-        for urls in self.set_valid_urls:
+        for urls in self.urls:
             if url in urls:
-                return self.EMT + urls
+                return UrlEMT.EMT + urls
 
         # if not found an error is raised
         raise ValueError("Month and year not found")
