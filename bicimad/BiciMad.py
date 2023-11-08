@@ -12,7 +12,6 @@ class BiciMad:
     @staticmethod
     def get_data(month: int, year: int) -> pd.DataFrame:
         emt_instance = UrlEMT()
-        emt_instance.select_valid_urls()
         emt_csv = emt_instance.get_csv(month, year)
         columns = ['idBike',
                    'fleet',
@@ -36,4 +35,30 @@ class BiciMad:
     @property
     def data(self):
         return self.__data
+
+    def __str__(self):
+        return str(self.__data)
+
+    def clean(self):
+        """
+
+        :return:
+        """
+        # Delete rows filled with NaNs
+        self.__data.dropna(how='all', inplace=True)
+
+        # Change data type form some columns
+        columns_dict = {
+            'fleet': 'string',
+            'idBike': 'string',
+            'station_lock': 'string',
+            'station_unlock': 'string'
+        }
+
+        self.__data = self.__data.astype(columns_dict)
+
+        # Remove the '.0' from the resultant conversion
+        columns_list = ['fleet', 'idBike', 'station_lock', 'station_unlock']
+        self.__data[columns_list] = self.__data[columns_list].apply(lambda x: x.str.rstrip('.0'))
+
 
