@@ -34,10 +34,10 @@ class BiciMad:
 
     @property
     def data(self):
-        return self.__data
+        return self._data
 
     def __str__(self):
-        return str(self.__data)
+        return str(self._data)
 
     def clean(self):
         """
@@ -45,7 +45,7 @@ class BiciMad:
         :return:
         """
         # Delete rows filled with NaNs
-        self.__data.dropna(how='all', inplace=True)
+        self._data.dropna(how='all', inplace=True)
 
         # Change data type form some columns
         columns_dict = {
@@ -55,10 +55,36 @@ class BiciMad:
             'station_unlock': 'string'
         }
 
-        self.__data = self.__data.astype(columns_dict)
+        self._data = self._data.astype(columns_dict)
 
         # Remove the '.0' from the resultant conversion
         columns_list = ['fleet', 'idBike', 'station_lock', 'station_unlock']
-        self.__data[columns_list] = self.__data[columns_list].apply(lambda x: x.str.rstrip('.0'))
+        self._data[columns_list] = self._data[columns_list].apply(lambda x: x.str.rstrip('.0'))
 
+    def resume(self) -> pd.Series:
+        """
 
+        :return:
+        """
+        year = self._year
+        month = self._month
+        usos_mes = len(self._data)
+        total_hours = round(self._data['trip_minutes'].sum() / 60, 2)
+
+        # Stations with most unblocks
+        stations_unblocked = self._data.groupby('unlock_station_name').size()
+        max_unblocked = stations_unblocked.max()
+        stations = set(stations_unblocked[stations_unblocked == max_unblocked].index)
+
+        data = {
+            'year': year,
+            'month': month,
+            'total_uses': usos_mes,
+            'total_time': total_hours,
+            'most_popular_station': stations,
+            'uses_from_most_popular': max_unblocked
+        }
+
+        data_series = pd.Series(data)
+
+        return data_series
