@@ -4,7 +4,6 @@ from bicimad.BiciMad import BiciMad
 if __name__ == "__main__":
     BiciMad1 = BiciMad(2, 23)
     BiciMad1.clean()
-    a = BiciMad1.station_unlock()
-    print(a)
+    print(type(BiciMad1))
 
 

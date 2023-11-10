@@ -5,19 +5,27 @@ import zipfile
 
 
 class UrlEMT:
+    """
+    This class allow us to use the BiciMAD API and retrieve a csv file
+    for a given mont and year
+    """
+
     # Constants
     EMT = "https://opendata.emtmadrid.es"
     GENERAL = "/Datos-estaticos/Datos-generales-(1)"
 
     def __init__(self):
+        """
+        Constructor that updates the set of valid urls of BiciMAS API
+        """
         self.urls = UrlEMT.select_valid_urls()
 
     @staticmethod
     def get_links(html) -> set:
         """
-
-        :param html:
-        :return:
+        It gets all the links from BiciMAD API that match the described reg exp
+        :param html: html file. In this case BiciMAD API HTML
+        :return: Set of urls from BiciMAD API
         """
         patron = r'/getattachment/[^"]+/trips_\d{2}_\d{2}_[A-Za-z]+-csv\.aspx'
         datare = re.compile(patron)
@@ -27,8 +35,8 @@ class UrlEMT:
     @staticmethod
     def select_valid_urls() -> set:
         """
-
-        :return:
+        It returns only valids urls from BiciMAD API.
+        :return: Set of valids urls from BiciMAD API
         """
         url = UrlEMT.EMT + UrlEMT.GENERAL
         response = requests.get(url)
@@ -41,10 +49,10 @@ class UrlEMT:
 
     def get_url(self, month: int, year: int) -> str:
         """
-
-        :param month:
-        :param year:
-        :return:
+        This method select a given url from the set of valid urls previously defined
+        :param month: Month of the year used to select the right url
+        :param year: Year used to select the right url
+        :return: String with the desired url if exists
         """
 
         # If not in the selected range an error is raised
@@ -68,10 +76,10 @@ class UrlEMT:
 
     def get_csv(self, month: int, year: int) -> io.StringIO:
         """
-
-        :param month:
-        :param year:
-        :return:
+        This method creates a csv file
+        :param month: Month of the year used to select the right url
+        :param year: Year used to select the right url
+        :return: io.String object containing a csv file
         """
         link = self.get_url(month, year)
         response = requests.get(link)

@@ -5,10 +5,16 @@ import numpy as np
 
 class BiciMad:
     """
-
+    This class allow us to retrieve a dataframe from the BiciMAD API and performs
+    some analysis on it.
     """
 
     def __init__(self, month: int, year: int):
+        """
+        Constructor of the class. it gets 2 parameters: month and year
+        :param month: Month of the year used to select the right csv
+        :param year: Year used to select the right csv
+        """
         self._month = month
         self._year = year
         self._data = BiciMad.get_data(month, year)
@@ -16,10 +22,10 @@ class BiciMad:
     @staticmethod
     def get_data(month: int, year: int) -> pd.DataFrame:
         """
-
-        :param month:
-        :param year:
-        :return:
+        With this static method we retrieve de desired dataset from BiciMAD
+        :param month:  Month of the year used to select the right csv
+        :param year: Year used to select the right csv
+        :return: Dataframe containing de data related to BiciMAD dataset month and year
         """
         emt_instance = UrlEMT()
         emt_csv = emt_instance.get_csv(month, year)
@@ -43,24 +49,23 @@ class BiciMad:
         return df_initial[columns]
 
     @property
-    def data(self):
+    def data(self) -> pd.DataFrame:
         """
-
-        :return:
+        Getter method to retrieve de Dataframe.
+        :return: BiciMad Dataframe for the given month and year
         """
         return self._data
 
     def __str__(self):
         """
-
+        str method for the class BiciMAD
         :return:
         """
         return str(self._data)
 
     def clean(self):
         """
-
-        :return:
+        Method that change some data types and remove rows where all its components are null
         """
         # Delete rows filled with NaNs
         self._data.dropna(how='all', inplace=True)
@@ -81,8 +86,9 @@ class BiciMad:
 
     def resume(self) -> pd.Series:
         """
-
-        :return:
+        Method to compute the year, month, total uses, total time, most popular station and its uses
+        from the BiciMAD dataframe
+        :return: Pandas Series with the above calculations
         """
         year = self._year
         month = self._month
@@ -109,24 +115,24 @@ class BiciMad:
 
     def num_station_non_blocked(self) -> int:
         """
-
-        :return:
+        It gives you the number of times a bicycle was unlocked in one station and not lock in another,
+        :return: int, the number of times that fact occurs
         """
         numero = np.sum(self._data['station_unlock'].notna() & self._data['station_lock'].isna())
         return numero
 
     def df_fleet_1(self) -> pd.DataFrame:
         """
-
-        :return:
+        Creates a Dataframe with only those bicycles from fleet 1
+        :return: Pandas dataframe with fleet 1 data
         """
         new_df = self._data[self._data['fleet'] == "1"]
         return new_df
 
     def day_time(self) -> pd.Series:
         """
-
-        :return:
+        Calculate the amount of hours of bicycles used per day in a month
+        :return: Pandas Series with the hours per day
         """
         # Group by fechas
         df_grouped_fechas = round(self._data.groupby('fecha')['trip_minutes'].sum() / 60, 2)
@@ -137,8 +143,8 @@ class BiciMad:
 
     def weekday_time(self) -> pd.Series:
         """
-
-        :return:
+        Calculates the number of hours of bicycles used per weekday in a moth
+        :return: Pandas Series with the above-mentioned calculation
         """
         # Create a copy of the df to add weekday column
         df = self._data.copy()
@@ -155,9 +161,8 @@ class BiciMad:
 
     def total_usage_day(self) -> pd.Series:
         """
-
-        :param df:
-        :return:
+        Number of usages pero day in a month
+        :return: Pandas Series with usages per day in a month
         """
         # Group by date and count
         df_grouped_horas = self._data.groupby("fecha").size()
@@ -168,9 +173,8 @@ class BiciMad:
 
     def station_unlock(self) -> pd.Series:
         """
-
-        :param df:
-        :return:
+        Computes the numbers of usages pero day and station for a given month and year
+        :return: Pandas Series with the above-mentioned calculation
         """
         df_grouped = self._data.groupby([pd.Grouper(freq="1D"), "station_unlock"]).size()
         df_grouped.name = "use_by_day_station"
