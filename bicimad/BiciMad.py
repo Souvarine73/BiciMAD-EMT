@@ -161,7 +161,7 @@ class BiciMad:
 
     def total_usage_day(self) -> pd.Series:
         """
-        Number of usages pero day in a month
+        Number of usages per day in a month
         :return: Pandas Series with usages per day in a month
         """
         # Group by date and count
