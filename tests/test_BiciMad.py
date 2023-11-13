@@ -21,31 +21,32 @@ def mock_bicimad() -> BiciMad:
 @pytest.mark.parametrize("month, year", [(1, 23), (1, 22), (5, 22)])
 def test_init(create_bicimad, month, year):
     b1 = create_bicimad(month, year)
-    assert b1._month == month
-    assert b1._year == year
+    assert b1.__dict__['_month'] == month
+    assert b1.__dict__['_year'] == year
 
 
 def test_init_df(mock_bicimad):
     mock_bicimad.clean()
-    shape_values = mock_bicimad._data.shape
+    shape_values = mock_bicimad.__dict__['_data'].shape
     assert shape_values[0] == 168494
     assert shape_values[1] == 15
 
 
-def test_get_data(mock_bicimad):
-    columns_df = set(mock_bicimad.data.columns)
+def test_get_data():
+    df = BiciMad.get_data(2, 23)
+    columns_df = set(df.columns)
     columns_expected = {'idBike', 'fleet', 'trip_minutes', 'geolocation_unlock',
                         'address_unlock', 'unlock_date', 'locktype', 'unlocktype',
                         'geolocation_lock', 'address_lock', 'lock_date', 'station_unlock',
                         'unlock_station_name', 'station_lock', 'lock_station_name'}
     assert columns_df == columns_expected
-    assert isinstance(mock_bicimad.data.index, pd.DatetimeIndex) \
-           and np.issubdtype(mock_bicimad.data.unlock_date, np.datetime64) \
-           and np.issubdtype(mock_bicimad.data.lock_date, np.datetime64)
+    assert isinstance(df.index, pd.DatetimeIndex) \
+           and np.issubdtype(df.unlock_date, np.datetime64) \
+           and np.issubdtype(df.lock_date, np.datetime64)
 
 
-def test_data(mock_bicimad):
-    assert isinstance(mock_bicimad.data, pd.DataFrame)
+def test_data():
+    assert isinstance(BiciMad.get_data(2, 23), pd.DataFrame)
 
 
 def test_clean(mock_bicimad):
