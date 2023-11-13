@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bicimad"
+version = "0.0.1"
+requires-python = ">=3.11"
+authors = [
+	{name = 'Alberto Soriano', email = 'albertosorianogomez1@gmail.com'}
+]
+
+# Realizamos la indicación de las dependencias y las versiones necesarias
+
+dependencies = [
+    "pandas >= 2.1.2",
+    "numpy >= 1.26.1",
+    "requests >= 2.31.0"]
+
+[tool.setuptools.packages.find]
+exclude = ["tests*"]

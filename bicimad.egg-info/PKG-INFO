@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: bicimad
+Version: 0.0.1
+Author-email: Alberto Soriano <albertosorianogomez1@gmail.com>
+Requires-Python: >=3.11
+Requires-Dist: pandas>=2.1.2
+Requires-Dist: numpy>=1.26.1
+Requires-Dist: requests>=2.31.0
